@@ -9,16 +9,18 @@ function CardsController($http) {
   var self = this;
   self.all = [];
   self.newCard = {};
+  self.addCard = addCard;
   self.deleteCard = deleteCard;
-  self.updateCard = updateCard;
+  self.getCards = getCards;
+  //self.updateCard = updateCard;
 
 //Setup get function
 function getCards(){
   $http
-    .get('http://localhost:3000/api/cards')      
-    .then(function(response){
-        console.log(response);
-        self.all = response.data;
+    .get('http://localhost:3000/cards')      
+    .then(function(res){
+        console.log(res);
+        self.all = res.data;
       });
   }
   getCards(); //call the function
@@ -26,8 +28,8 @@ function getCards(){
 //Add card function
 function addCard(){
   $http
-    .post('http://localhost:3000/api/cards', self.newCard)
-    .then(function(response){
+    .post('http://localhost:3000/cards', self.newCard)
+    .then(function(res){
         getCards(); //retrieves updated card list
       });
     self.newCard = {}; //resets form
@@ -37,9 +39,9 @@ function addCard(){
 function deleteCard(card){
   console.log(Card);
   $http
-    .delete('http://localhost:3000/api/cards/', + card._id)
-    .then(function(response){
-      console.log(response);
+    .delete('http://localhost:3000/cards/', + card._id)
+    .then(function(res){
+      console.log(res);
       var index = self.all.indexOf(card);
       self.all.splice(index, 1);
     });
@@ -50,7 +52,7 @@ function deleteCard(card){
 function updateCard(card){
   console.log(addCard);
   $http
-    .put('http://localhost:3000/api/cards/', + card._id)
+    .put('http://localhost:3000/cards/', + card._id)
     .then(function(response){
       console.log(response);
       card.question = question;
