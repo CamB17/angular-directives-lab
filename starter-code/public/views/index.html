@@ -10,6 +10,7 @@
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/cardsController.js"></script>
+        <!-- <script src="scripts/cardDirective.js"></script> -->
     </head>
     <body>
       <div class="container">
@@ -24,15 +25,27 @@
 
             <div class="col-sm-6 col-md-6 col-lg-4" ng-repeat="card in cardsController.questionsList" >
               <div class="card">
-                <h4 class="card-title">{{card.question}}</h4>
+                <wdi-card question="{{card.question}}"></wdi-card>
                 <h6>Cards Against Assembly</h6>
+            <!-- Delete button connected to delete route -->
+            <button class="delete" ng-click="cardsController.deleteCard(card)">Remove</button>
+
+            <!-- ADD ng-submit to the form -->
+          <h2 class="pull-left">Create a Card!</h1>
+            <form class="add-card" ng-submit="cardsController.addCard()">
+            <div>
+              <label for="newCard-question">Question:</label>
+              <input type="text" id="newCard-question" ng-model="cardsController.newCard.question">
+            </div>
               </div>
             </div>
 
           </div>
-        </section>
 
-      <footer>
+      </section>
+<hr/>
+<wdi-card question="Why is Angular so awesome?"></wdi-card>
+<footer>
         <p>Made with <span class="heart">♥︎</span> at General Assembly</p>
       </footer>
       </div>
