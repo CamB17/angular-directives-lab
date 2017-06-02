@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var CardSchema = new Schema({
-	question : String
+var CardSchema = new Schema ({
+	question: String
 });
 
 // card model

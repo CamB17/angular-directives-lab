@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="CardsAgainstAssembly">
+<html lang='en' ng-app="CardsAgainstAssembly">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,46 +7,49 @@
         <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
         <link rel="stylesheet" href="styles/style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
-        <script src="scripts/app.js"></script>
-        <!-- <script src="scripts/directives/cardDirective.js"></script> -->
+        <script src="app.js"></script>
         <script src="scripts/controllers/cardsController.js"></script>
+        <script src="directives/cardDirective.js"></script>
     </head>
-    <body>
+        <body>
       <div class="container">
-        <header class="navbar">
-          <h1 class="pull-left">Cards Against Assembly</h1>
 
+        <header class='navbar'>
+          <h1 class='pull-left'>Cards Against Assembly</h1>
           <scores></scores>
         </header>
 
-        <section id="cards" class="container-fluid" ng-controller="CardsController as cardsController">
-          <div class="row">
-
-            <div class="col-sm-6 col-md-6 col-lg-4" ng-repeat="card in cardsController.questionsList" >
-              <div class="card">
-                <wdi-card question="{{card.question}}"></wdi-card>
-                <h6>Cards Against Assembly</h6>
-            <!-- Delete button connected to delete route -->
-            <button class="delete" ng-click="cardsController.deleteCard(card)">Remove</button>
-
-            <!-- ADD ng-submit to the form -->
-          <h2 class="pull-left">Create a Card!</h1>
-            <form class="add-card" ng-submit="cardsController.addCard()">
+        <section id="cards" class='container-fluid' ng-controller="CardsController as cards">
+          <form ng-submit="cards.addCard()">
             <div>
-              <label for="newCard-question">Question:</label>
-              <input type="text" id="newCard-question" ng-model="cardsController.newCard.question">
+              <label for="newCard-question">New Question:</label>
+              <input type="text" id="newCard-question" ng-model="cards.newCard.question">
             </div>
-              </div>
+            <div>
+              <input type="submit" value="Add Question">
+            </div>
+          </form>
+
+          <div class='row'>
+            <div class='col-sm-6 col-md-6 col-lg-4' ng-repeat="card in cards.all" data-card-id="card._id">
+              <wdi-card question="{{card.question}}" id="{{card._id}}"></wdi-card>
+              <!-- <p>{{card._id}}</p> -->
+
+
+              <form ng-submit="cards.updateCard(editCard.question, card._id)" id="{{card._id}}">
+                  <label for="editCard-question">Edit Question:</label>
+                  <input type="text" id="editCard-question" ng-model="editCard.question">
+                <input type="submit" value="submit">
+              </form>
+
+            </div>
           </div>
 
-        </div>
-
-      </section>
-<hr/>
-<wdi-card question="Why is Angular so awesome?"></wdi-card>
-<footer>
-        <p>Made with <span class="heart">♥︎</span> at General Assembly</p>
+        </section>
+      <footer>
+        <p>Made with <span class='heart'>♥︎</span> at General Assembly</p>
       </footer>
       </div>
     </body>

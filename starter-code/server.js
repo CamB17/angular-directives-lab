@@ -1,89 +1,103 @@
+var express = require('express');
+var app = express();
+router = express.Router();
+var bodyParser = require('body-parser');
+var port = process.env.PORT || 3000;
 
-var express 	= require('express');
-var app    		= express();
-var bodyParser 	= require('body-parser');
-var mongoose = require('mongoose');
-
-var db      	= require('./models');
-
-
-// body parser config to accept our datatypes
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-// serve static files in public
-app.use(express.static('public'));
-
+// public views
 app.use(express.static(__dirname + '/public'));
-//Express loads the view module internally
-//app.set('views', './views');
-//var db = require('./models');
 
-/*
- * HTML Endpoints
- */
-app.get('/', function index(req, res) {
-  res.sendFile(__dirname + '/views/index.html');
+// HTML Endpoint
+app.get('/', function home(req, res){
+	res.sendFile(__dirname + '/views/index.html');
 });
 
-app.use(function(req, res, next) { // fixes allow origin permission error
-	 res.header("Access-Control-Allow-Origin", "*");
-	 res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	 next();
-	});
+// Hard coded Data
+var cards = [
+    {question: "What is Batman's guilty pleasure?"},
+    {question: "I'm sorry professor, I couldn't complete my homework because _________."},
+    {question: "I get by with a little help from _________."},
+    {question: "_________. It's a trap!"},
+    {question: "The class field trip was completely ruined by _________."},
+    {question: "What's my secret power?"}
+  ];
 
-////////////////////
-//  ROUTES
-///////////////////
+// DB ROUTES
+// Require DB models
+let db = require('./models');
 
-//Show all cards
-app.get('/cards', function show(req,res){
-	db.Card.find({}, function(err,cards){
+// GET
+app.get('/cards', (req,res)=>{
+	db.Card.find()
+	.exec((err, cards) => {
+		if (err){
+			console.log("Get error: ",err);
+		}
 		res.json(cards);
 	});
 });
 
+// SHOW
+app.get('/cards/:id', (req,res)=>{
+	db.Card.findOne({_id: req.params.id}, (err, data) =>{
+		if (err){
+			console.log("Show error: ",err);
+		}
+		res.json(data);
+	});
+});
 
-app.get('/cards/:id', function show(req, res){	
-	db.Card.findById({id: req.params.id})
-	.exec(function(err, card){
+// POST
+app.post('/cards', (req,res)=>{
+	var newCard = new db.Card({
+		question: req.body.question
+	});
+	newCard.save((err,card) =>{
+		if (err){
+			console.log("Save Error: ", err);
+		}
 		res.json(card);
 	});
 });
 
-//Create a card
-app.post('/cards', function(res, req) {
-	var newCard = new db.Card({
-			question: req.body.question
+// DELETE
+app.delete('/cards/:id', (req,res)=>{
+	var cardId = req.params.id;
+	db.Card.findOneAndRemove({_id: cardId}, (err, deletedCard)=>{
+		if (err){
+			console.log('Delete Error: ', err);
+		}
+		res.json(deletedCard);
 	});
-//Save the new card
-			newCard.save(function(err, card) {
-				if(err) {
-				return console.log('save error:' + err);
+});
+
+// PUT
+app.put('/cards/:id', (req,res)=>{
+	// console.log(req);
+	var cardId = req.params.id;
+	db.Card.findOne({_id: cardId}, (err, foundCard)=>{
+		if (err){
+			console.log('Update error: ', err);
+		}
+		console.log(foundCard);
+		console.log(req.body);
+		foundCard.id = cardId;
+		foundCard.question = req.body.question;
+		foundCard.save((err, card)=>{
+			if (err){
+				console.log("Update Save Error: ", err);
 			}
-			console.log('save ', card.question);
-				res.end();
+			console.log("Updated ", card.question);
+		 res.json(card);
 		});
-
-});
-
-app.delete('/cards/:id',function(req, res){
-	var id = req.params.id;
-	db.Card.findByIdAndRemove({_id: id}, function(err, cards){
-		if (err) res.json(err);
-		console.log("Removed " + id);
-		res.json(cards);
 	});
 });
 
-
-
-/**********
- * SERVER *
- **********/
-
-// listen on port 3000
-app.listen(process.env.PORT || 3000, function () {
-  console.log('Express server is up and running on http://localhost:3000/');
+// server
+app.listen(3000, () => {
+	console.log('Server running on PORT 3000');
 });

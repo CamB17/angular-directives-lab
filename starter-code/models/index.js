@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/cards");
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/cards');
 
-module.exports = require("./card.js");
+module.exports.Card = require('./card.js');
